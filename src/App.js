@@ -2,8 +2,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 
+// Ensure the backend URL is correctly set
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 console.log('Backend URL:', backendUrl);
+
+if (!backendUrl) {
+  console.error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+}
 
 const socket = backendUrl ? io(backendUrl) : null;
 
