@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client'; // Ensure this import statement is correct
 import './index.css';
 import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import App from './App';
@@ -42,9 +42,17 @@ function CreateRoom() {
   React.useEffect(() => {
     const createRoom = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/room`);
+        const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/room`;
+        console.log('Fetching:', endpoint); // Log the backend URL
+        const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error('Network response was not ok');
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text(); // Read the response as text
+          console.error('Response received:', text); // Log the response text
+          throw new Error(`Expected JSON response but received HTML or other format. Response: ${text}`);
         }
         const data = await response.json();
         setRoomId(data.roomId);

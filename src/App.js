@@ -2,7 +2,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const socket = io(process.env.NEXT_PUBLIC_BACKEND_URL);
+// Ensure the backend URL is correctly set
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+if (!backendUrl) {
+  console.error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+}
+
+const socket = io(backendUrl);
 
 function App() {
   const { roomId } = useParams();
@@ -26,7 +32,9 @@ function App() {
 
     // Track handler for remote stream
     pc.ontrack = (event) => {
-      remoteVideoRef.current.srcObject = event.streams[0];
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
     };
 
     // Join the room
@@ -84,7 +92,9 @@ function App() {
     // Get local media stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        localVideoRef.current.srcObject = stream;
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+        }
 
         // Check if peerConnection is still open before adding tracks
         if (pc.signalingState !== 'closed') {
