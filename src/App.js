@@ -2,13 +2,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 
-// Ensure the backend URL is correctly set
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-if (!backendUrl) {
-  console.error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
-}
+console.log('Backend URL:', backendUrl);
 
-const socket = io(backendUrl);
+const socket = backendUrl ? io(backendUrl) : null;
 
 function App() {
   const { roomId } = useParams();
@@ -18,8 +15,14 @@ function App() {
   const [isCalling, setIsCalling] = useState(false);
   const [micActive, setMicActive] = useState(true);
   const [cameraActive, setCameraActive] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!backendUrl) {
+      setError('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+      return;
+    }
+
     const pc = new RTCPeerConnection();
     setPeerConnection(pc);
 
@@ -32,9 +35,7 @@ function App() {
 
     // Track handler for remote stream
     pc.ontrack = (event) => {
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-      }
+      remoteVideoRef.current.srcObject = event.streams[0];
     };
 
     // Join the room
@@ -92,9 +93,7 @@ function App() {
     // Get local media stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-        }
+        localVideoRef.current.srcObject = stream;
 
         // Check if peerConnection is still open before adding tracks
         if (pc.signalingState !== 'closed') {
@@ -143,6 +142,21 @@ function App() {
       setCameraActive(!cameraActive);
     }
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-2xl">
+          <div className="text-red-600 flex items-center space-x-2">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Error: {error}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">

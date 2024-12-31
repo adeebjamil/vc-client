@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-ro
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // Log the backend URL
+
 function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
@@ -44,8 +46,9 @@ function CreateRoom() {
         if (!backendUrl) {
           throw new Error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
         }
+        console.log('Backend URL:', backendUrl); // Log the backend URL
         const endpoint = `${backendUrl}/room`;
-        console.log('Fetching:', endpoint); // Log the backend URL
+        console.log('Fetching:', endpoint); // Log the fetch URL
         const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error('Network response was not ok');
