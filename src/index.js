@@ -1,11 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // Ensure this import statement is correct
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// Home component for the main page
 function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
@@ -16,7 +15,7 @@ function Home() {
               Welcome to Video Chat
             </h1>
             <p className="text-gray-600 mb-8 text-center">
-              Create a room and start video chatting with your friends instantly
+              Create a room and start video chatting with your friends instantly.
             </p>
             <div className="flex justify-center">
               <Link
@@ -33,7 +32,6 @@ function Home() {
   );
 }
 
-// CreateRoom component to create a room and display the link
 function CreateRoom() {
   const [roomId, setRoomId] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -42,7 +40,11 @@ function CreateRoom() {
   React.useEffect(() => {
     const createRoom = async () => {
       try {
-        const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/room`;
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+        if (!backendUrl) {
+          throw new Error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+        }
+        const endpoint = `${backendUrl}/room`;
         console.log('Fetching:', endpoint); // Log the backend URL
         const response = await fetch(endpoint);
         if (!response.ok) {
@@ -127,7 +129,6 @@ function CreateRoom() {
   );
 }
 
-// Root component to handle routing
 function Root() {
   return (
     <Router>
