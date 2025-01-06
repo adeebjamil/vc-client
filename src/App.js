@@ -2,13 +2,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 
-// Ensure the backend URL is correctly set
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-console.log('Backend URL:', backendUrl);
+// Use the backend URL from environment variables
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-if (!backendUrl) {
-  console.error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
-}
 
 const socket = backendUrl ? io(backendUrl) : null;
 
@@ -24,7 +20,11 @@ function App() {
 
   useEffect(() => {
     if (!backendUrl) {
-      setError('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+      setError('Backend URL is not set.');
+      return;
+    }
+    if (!socket) {
+      setError('Socket is not initialized. Please check your backend configuration.');
       return;
     }
 

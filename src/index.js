@@ -5,8 +5,11 @@ import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-ro
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // Log the backend URL
+// Use the backend URL from environment variables
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
+
+// Home component
 function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
@@ -34,6 +37,7 @@ function Home() {
   );
 }
 
+// CreateRoom component
 function CreateRoom() {
   const [roomId, setRoomId] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -42,9 +46,8 @@ function CreateRoom() {
   React.useEffect(() => {
     const createRoom = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
         if (!backendUrl) {
-          throw new Error('Backend URL is not set. Please set NEXT_PUBLIC_BACKEND_URL in your environment variables.');
+          throw new Error('Backend URL is not set.');
         }
         console.log('Backend URL:', backendUrl); // Log the backend URL
         const endpoint = `${backendUrl}/room`;
@@ -132,6 +135,7 @@ function CreateRoom() {
   );
 }
 
+// Root component
 function Root() {
   return (
     <Router>
