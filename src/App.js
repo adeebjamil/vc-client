@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 
 // Use the backend URL from environment variables
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
+console.log('Backend URL:', backendUrl);
 
 const socket = backendUrl ? io(backendUrl) : null;
 
